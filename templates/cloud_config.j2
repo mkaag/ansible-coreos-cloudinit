@@ -7,7 +7,7 @@ coreos:
     peer-addr: $private_ipv4:7001
   fleet:
     public-ip: $private_ipv4
-    metadata: {{ machine_metadata }}
+    metadata: {{ pod_metadata | union(machine_metadata) | join(",") }},public_ip=$public_ipv4,region={{ region_name }}
   update:
     reboot-strategy: {{ coreos_reboot }}
     group: {{ coreos_channel }}

@@ -36,16 +36,51 @@ Example Playbook
 
 ```yml
 ---
-- hosts: coreos
-  vars:
-    coreos_discovery=https://discovery.etcd.io/12345678901234567890
-    coreos_channel=stable
-    coreos_reboot=etcd-lock
-    machine_metadata=[region=ams3,public_ip=$public_ipv4]
-    username: core
-    userssh: AAAAB3N...
+- hosts: production
+  gather_facts: false
+  vars_files:
+    - vars/custom.yml
+    - group_vars/production.yml
   roles:
     - mkaag.coreos-cloudinit
+```
+
+vars/custom.yml
+---------------
+
+```yml
+---
+region_name: fra1
+username: core
+userssh: AAAAB...
+```
+
+group_vars/production.yml
+-------------------------
+
+```yml
+---
+pod: "production"
+pod_metadata:
+  - "pod={{ pod }}"
+```
+
+
+Example Inventory
+-----------------
+
+```
+[production:vars]
+ansible_connection=ssh
+ansible_ssh_user=core
+ansible_ssh_port=22
+ansible_ssh_private_key_file=~/.ssh/id_rsa
+ansible_python_interpreter="PATH=/home/core/bin:$PATH python"
+coreos_discovery=https://discovery.etcd.io/1234567890123456789012345678901234567890
+coreos_channel=stable
+coreos_reboot=etcd-lock
+machine_metadata=[]
+domain=domain.com
 ```
 
 License
