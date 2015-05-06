@@ -1,0 +1,16 @@
+---
+- name: ensure destination directory does exist
+  file: path=/var/lib/coreos-install state=directory
+  sudo: yes
+  sudo_user: root
+
+- name: install cloudconfig
+  template: src=cloud_config.j2 dest=/var/lib/coreos-install/user_data
+  sudo: yes
+  sudo_user: root
+
+- name: run coreos-cloudinit
+  raw: /bin/coreos-cloudinit --from-file=/var/lib/coreos-install/user_data
+  sudo: yes
+  sudo_user: root
+  tags: apply-cloudconfig
